@@ -11,6 +11,18 @@ This blog demonstrates:
 - **Clean Design**: Simple, responsive design that works on all devices
 - **Static Files**: All content is served as static files
 
+## How This Blog Was Built Using GitHub Copilot
+Building this blog was an enjoyable and efficient process, thanks to the help of GitHub Copilot. 
+Copilot is an AI-powered coding assistant that suggests code and entire functions in real-time, 
+directly within your editor. By leveraging Copilot, I was able to speed up development, reduce 
+boilerplate, and focus more on creativity rather than repetitive tasks.
+
+Throughout the setup, Copilot provided helpful suggestions for HTML structure, JavaScript logic, 
+and even shell scripts for deployment. Its integration with Visual Studio Code made it easy to 
+generate code snippets, refactor existing code, and explore new technologies with confidence.
+
+If you’re interested in accelerating your own coding projects, I highly recommend checking out GitHub Copilot.
+
 ## Features
 
 - 📝 **Markdown Rendering**: Posts are written in Markdown and rendered to HTML
