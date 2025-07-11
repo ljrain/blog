@@ -1,0 +1,36 @@
+name: Publish to Codespaces
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  setup-codespaces:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+      
+      - name: Verify blog files
+        run: |
+          echo "Checking blog structure..."
+          ls -la
+          echo "Posts directory:"
+          ls -la posts/
+          echo "Assets directory:"
+          ls -la assets/
+
+      - name: Start server (Preview in Codespaces)
+        run: |
+          echo "Starting Python HTTP server on port 8000..."
+          python3 -m http.server 8000 &
+          sleep 5
+          echo "Server started! Blog is available at http://localhost:8000"
+        # Codespaces automatically forwards ports defined in devcontainer.json
