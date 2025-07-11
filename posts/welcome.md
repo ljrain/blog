@@ -1,6 +1,6 @@
 # Welcome to My Blog
 
-Hello and welcome to my personal blog! This is a simple blog website built from scratch using vanilla JavaScript and the marked.esm.js library for Markdown rendering.
+Hello and welcome to my personal blog! This simple web site was created with the help of Github Copilot.
 
 ## About This Blog
 
