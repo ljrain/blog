@@ -22,6 +22,11 @@ const blogPosts = [
         id: 'javascript-tips',
         title: 'JavaScript Tips and Tricks',
         filename: 'javascript-tips.md'
+    },
+    {
+        id:'github-branching-agent',
+        title: 'GitHub Branching Agent',
+        filename: 'GitHubBranchingAgent.md'
     }
 ];
 
