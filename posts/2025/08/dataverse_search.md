@@ -1,254 +1,35 @@
 
+What is Dataverse Search?
+Dataverse Search is a powerful global search feature in Microsoft Dataverse (used in Power Apps/Dynamics 365) that helps you find information quickly across your organization’s data. Instead of searching one table at a time, Dataverse Search looks through many tables at once (accounts, contacts, cases, etc.) and shows all matching results in a single list1. For example, a single search could pull up a customer Account, the related Contact person, and a relevant Opportunity, all together. It’s the default search box at the top of model-driven apps and replaces the older “Quick Find” – offering a more robust, faster, and user-friendly experience22.
+Key features of Dataverse Search include:
 
-<style>
-        :root {
-        --accent: #464feb;
-        --timeline-ln: linear-gradient(to bottom, transparent 0%, #b0beff 15%, #b0beff 85%, transparent 100%);
-        --timeline-border: #ffffff;
-        --bg-card: #f5f7fa;
-        --bg-hover: #ebefff;
-        --text-title: #424242;
-        --text-accent: var(--accent);
-        --text-sub: #424242;
-        --radius: 12px;
-        --border: #e0e0e0;
-        --shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
-        --hover-shadow: 0 4px 14px rgba(39, 16, 16, 0.1);
-        --font: "Segoe Sans", "Segoe UI", "Segoe UI Web (West European)", -apple-system, "system-ui", Roboto, "Helvetica Neue", sans-serif;
-    }
+Search suggestions as you type: Start typing in the search bar, and it will auto-suggest likely matches (including recent records you accessed) to speed up your search1.
+Matches any word, not the whole phrase: If you enter multiple words, results can have any of those words in any order (across different fields) and still match. This is more flexible than old search which required all words in one field12.
+Understands your intent: It uses AI to handle inflectional forms (searching “stream” finds “streaming/streamed”), common misspellings, abbreviations, and known synonyms automatically13. So you don’t have to perfectly spell or remember exact terms – the search engine is forgiving and “smart”.
+Searches in notes and documents: Dataverse Search isn’t limited to structured fields; it also looks at text inside Notes and attachments (like PDFs, Word docs, emails) stored in Dataverse1. This means if a keyword appears in a file attached to a record, that record can still show up in your results.
+Security-trimmed and relevant: You will only see results for data you have permissions to view (it respects Dataverse security roles), and results are sorted by relevance – which we’ll explain next1.
+How Does Ranking Work?
+When you search, Dataverse Search ranks the results by a relevance score behind the scenes2. In simple terms, records that best match your search terms will appear at the top of the list. Key factors that influence ranking include:
 
-    @media (prefers-color-scheme: dark) {
-        :root {
-            --accent: #7385ff;
-            --timeline-ln: linear-gradient(to bottom, transparent 0%, transparent 3%, #6264a7 30%, #6264a7 50%, transparent 97%, transparent 100%);
-            --timeline-border: #424242;
-            --bg-card: #1a1a1a;
-            --bg-hover: #2a2a2a;
-            --text-title: #ffffff;
-            --text-sub: #ffffff;
-            --shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-            --hover-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
-            --border: #3d3d3d;
-        }
-    }
+Frequency of match: If your keyword appears several times in a record (or in important fields like the title/name), that record is deemed more relevant and scores higher.
+Uniqueness of terms: A match on a uncommon word weighs more than a very common word. (For instance, a match on “Contoso” is more significant than a match on a generic word like “company”.)
+Field importance: Some fields can be considered higher priority for matching (e.g., matching in an account name might count more than in a notes field). Administrators can configure which columns are searchable and even boost certain fields via the table’s Quick Find view settings (so the system can rank those higher).
+Intent matching: Beyond just exact words, the search engine can use AI (the same tech as Azure Cognitive Search) to understand context. This means even if your query doesn’t exactly match the text, it might still bring up a highly relevant record. For example, searching a question like “renew contract” might rank a case that says “contract renewal” highly, because it recognizes the words are related. In premium setups, a semantic ranking layer can further fine-tune results by reading content and judging relevance, but generally the default ranking does a great job for typical searches.
+The bottom line: you don’t have to sort results yourself – Dataverse Search will automatically bubble up the likely matches. If the thing you’re looking for isn’t on the first page, you might refine your query (see tips below) because the system has already tried to show the best matches first2.
+(Fun fact: Dataverse Search uses the same algorithms that power Bing and Office’s search, adapted for business data. It uses a scoring formula (similar to TF-IDF/BM25 in information retrieval) to quantify relevance, but you don’t need to know the math – just trust that higher up means more relevant.)
+Tips & Tricks for Getting the Most Out of Dataverse Search
+Even though Dataverse Search works pretty intuitively, here are some handy tips to search more effectively and efficiently:
 
-    @media (prefers-contrast: more),
-    (forced-colors: active) {
-        :root {
-            --accent: ActiveText;
-            --timeline-ln: ActiveText;
-            --timeline-border: Canvas;
-            --bg-card: Canvas;
-            --bg-hover: Canvas;
-            --text-title: CanvasText;
-            --text-sub: CanvasText;
-            --shadow: 0 2px 10px Canvas;
-            --hover-shadow: 0 4px 14px Canvas;
-            --border: ButtonBorder;
-        }
-    }
+Combine keywords wisely: You can simply type multiple keywords and the search will return items that have any of those words. To be more specific, use AND/OR or plus/minus operators. For example:Contoso AND project (or Contoso +project) – finds records containing both terms3.
+Contoso OR Fabrikam (or Contoso | Fabrikam) – finds records with either term.
+Contoso -inactive – finds Contoso records excluding those that contain “inactive”3.
 
-    .insights-container {
-        display: grid;
-        grid-template-columns: repeat(2,minmax(240px,1fr));
-        padding: 0px 16px 0px 16px;
-        gap: 16px;
-        margin: 0 0;
-        font-family: var(--font);
-    }
+These help when you have too many (or too few) results, by tightening or broadening the search. (Note: AND is applied by default across different fields, so usually just writing multiple words is fine. The operators give you extra control.)
 
-    .insight-card:last-child:nth-child(odd){
-        grid-column: 1 / -1;
-    }
-
-    .insight-card {
-        background-color: var(--bg-card);
-        border-radius: var(--radius);
-        border: 1px solid var(--border);
-        box-shadow: var(--shadow);
-        min-width: 220px;
-        padding: 16px 20px 16px 20px;
-    }
-
-    .insight-card:hover {
-        background-color: var(--bg-hover);
-    }
-
-    .insight-card h4 {
-        margin: 0px 0px 8px 0px;
-        font-size: 1.1rem;
-        color: var(--text-accent);
-        font-weight: 600;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-
-    .insight-card .icon {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 20px;
-        height: 20px;
-        font-size: 1.1rem;
-        color: var(--text-accent);
-    }
-
-    .insight-card p {
-        font-size: 0.92rem;
-        color: var(--text-sub);
-        line-height: 1.5;
-        margin: 0px;
-    }
-
-    .insight-card p b, .insight-card p strong {
-        font-weight: 600;
-    }
-
-    .metrics-container {
-        display:grid;
-        grid-template-columns:repeat(2,minmax(210px,1fr));
-        font-family: var(--font);
-        padding: 0px 16px 0px 16px;
-        gap: 16px;
-    }
-
-    .metric-card:last-child:nth-child(odd){
-        grid-column:1 / -1; 
-    }
-
-    .metric-card {
-        flex: 1 1 210px;
-        padding: 16px;
-        background-color: var(--bg-card);
-        border-radius: var(--radius);
-        border: 1px solid var(--border);
-        text-align: center;
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-    }
-
-    .metric-card:hover {
-        background-color: var(--bg-hover);
-    }
-
-    .metric-card h4 {
-        margin: 0px;
-        font-size: 1rem;
-        color: var(--text-title);
-        font-weight: 600;
-    }
-
-    .metric-card .metric-card-value {
-        margin: 0px;
-        font-size: 1.4rem;
-        font-weight: 600;
-        color: var(--text-accent);
-    }
-
-    .metric-card p {
-        font-size: 0.85rem;
-        color: var(--text-sub);
-        line-height: 1.45;
-        margin: 0;
-    }
-
-    .timeline-container {
-        position: relative;
-        margin: 0 0 0 0;
-        padding: 0px 16px 0px 56px;
-        list-style: none;
-        font-family: var(--font);
-        font-size: 0.9rem;
-        color: var(--text-sub);
-        line-height: 1.4;
-    }
-
-    .timeline-container::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: calc(-40px + 56px);
-        width: 2px;
-        height: 100%;
-        background: var(--timeline-ln);
-    }
-
-    .timeline-container > li {
-        position: relative;
-        margin-bottom: 16px;
-        padding: 16px 20px 16px 20px;
-        border-radius: var(--radius);
-        background: var(--bg-card);
-        border: 1px solid var(--border);
-    }
-
-    .timeline-container > li:last-child {
-        margin-bottom: 0px;
-    }
-
-    .timeline-container > li:hover {
-        background-color: var(--bg-hover);
-    }
-
-    .timeline-container > li::before {
-        content: "";
-        position: absolute;
-        top: 18px;
-        left: -40px;
-        width: 14px;
-        height: 14px;
-        background: var(--accent);
-        border: var(--timeline-border) 2px solid;
-        border-radius: 50%;
-        transform: translateX(-50%);
-        box-shadow: 0px 0px 2px 0px #00000012, 0px 4px 8px 0px #00000014;
-    }
-
-    .timeline-container > li h4 {
-        margin: 0 0 5px;
-        font-size: 1rem;
-        font-weight: 600;
-        color: var(--accent);
-    }
-
-    .timeline-container > li h4 em {
-        margin: 0 0 5px;
-        font-size: 1rem;
-        font-weight: 600;
-        color: var(--accent);
-        font-style: normal;       
-    }
-
-    .timeline-container > li * {
-        margin: 0;
-        font-size: 0.9rem;
-        color: var(--text-sub);
-        line-height: 1.4;
-    }
-
-    .timeline-container > li * b, .timeline-container > li * strong {
-        font-weight: 600;
-    }
-        @media (max-width:600px){
-      .metrics-container,
-      .insights-container{
-        grid-template-columns:1fr;
-      }
-    }
-</style>
-<div class="insights-container">
-  <div class="insight-card">
-    <h4>Unified Global Search</h4>
-    <p>Search <b>across multiple tables at once</b> in a model-driven app, and get results in one combined list <b>sorted by relevance</b>.</p>
-  </div>
-  <div class="insight-card">
-    <h4>Intelligent Matching</h4>
-    <p>Understands <b>typos, abbreviations, and synonyms</b> (e.g. <i>Bob</i> finds <i>Robert</i>), and even searches inside <b>notes and file attachments</b>.</p>
-  </div>
-  <div class="insight-card">
-    <h4>Fast & Relevant Results</h4>
-    <p>Uses advanced search algorithms (from Azure Cognitive Search) to quickly deliver the <b>most relevant records first</b>, making it faster and more accurate than the old Quick Find.</p>
-  </div>
-</div>
+Use wildcards for partial matches: If you’re not sure of the exact spelling or want to search by the beginning of a word, use the  wildcard. For instance, searching for Daniel could find “Daniels” or “Daniela”3. Or micro* would match “Microsoft”. This is helpful for long names or codes.
+Leverage filters on the results page: After you search, notice you can filter results by table (entity type) – e.g., only show Accounts or only Contacts – and sometimes by other facets like owner or modified date3. If your initial search brings back a lot, using these filters can zero in on what you need (for example, filter to Cases if you know you’re looking for a support case).
+Check suggestions and recent items: When you click on the search bar (even before typing), it often shows a list of your recently accessed records and past searches for quick re-opening3. And as you type, you’ll see live suggestions (possible matches). These features save time – utilize them to jump straight to what you were doing or quickly select an auto-completed suggestion1.
+Don’t worry about typos or synonyms: Dataverse Search has built-in intelligence to handle misspellings and variations. If you accidentally type “Adrress” instead of “Address”, it can still find the right thing. It also recognizes common nicknames and acronyms (typing “CRM” will match “Customer Relationship Management”)13. So generally, just try a best-guess query – the search is quite forgiving and often understands what you meant.
+Remember it searches attachments too: If you’re looking for information that might be in a document (like a PDF or an email), include a term from that document. Dataverse Search will surface the record that has that file attached if the text inside the file matches your query1. This can be a lifesaver when you’re trying to find, say, an invoice PDF or a proposal document without knowing its title.
+Use Quick Actions from results: In many model-driven apps, the search results aren’t just read-only – you can often take actions like opening the record directly, or marking an activity as complete right from the search list (hover over a result to see available actions)3. For example, after searching a task, you could mark it Completed without navigating away. This makes workflow faster.
+By keeping these tips in mind, you can harness the full power of Dataverse Search. In short: Dataverse Search is your go-to tool to swiftly find anything in Dataverse, using a smart engine that interprets your query and ranks results by relevance. With a few tricks like using filters or advanced operators, you’ll retrieve what you need even faster. Happy searching!
